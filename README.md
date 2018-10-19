@@ -2,6 +2,10 @@
     <img src="static/logos/logo-1024.png" alt="Logo" width='200px' height='200px'/>
 </div>
 
+# Gatsby v2
+
+NOTE: This is a Gatsby v2 fork of [gatsby-starter-casper](https://github.com/haysclark/gatsby-starter-casper) by [@haysclark](https://github.com/haysclark), the upgrade to v2 was done by [@hnspn](https://github.com/hnspn)
+
 # Gatsby Casper Starter
 [![Code Climate](https://codeclimate.com/github/haysclark/gatsby-starter-casper/badges/gpa.svg)](https://codeclimate.com/github/haysclark/gatsby-starter-casper)
 [![Issue Count](https://codeclimate.com/github/haysclark/gatsby-starter-casper/badges/issue_count.svg)](https://codeclimate.com/github/haysclark/gatsby-starter-casper)
@@ -14,12 +18,6 @@ This starter also serves as example for the [Gatsby-Pagination](https://github.c
 [Demo website.](https://haysclark.github.io/gatsby-starter-casper/)
 
 ![Screenshot](docs/screenshot.png)
-
-## GatsbyJS V1
-
-This starter is based on GatsbyJS V1, which brings progressive web app features such as automatic code and data splitting (by route), prefetching, with service worker/offline-first support and PRPL pattern.
-
-More information in the [announcement](https://www.gatsbyjs.org/blog/gatsby-first-beta-release/).
 
 ## Features
 
