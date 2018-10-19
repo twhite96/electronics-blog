@@ -8,7 +8,7 @@ tags:
     - gatsby
     - v2
 ---
-This starter has been forked and upgraded to Gatsby v2
+This starter has been forked and upgraded to Gatsby v2.
 
 This is a Gatsby v2 fork of [gatsby-starter-casper](https://github.com/haysclark/gatsby-starter-casper) by [@haysclark](https://github.com/haysclark). The upgrade to v2 was mostly done by [@hnspn](https://github.com/hnspn) with a little help from the folks at [GatsbyCentral](https://www.gatsbycentral.com/).
 
