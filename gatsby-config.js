@@ -1,169 +1,84 @@
-const config = require("./data/SiteConfig");
-
-const pathPrefix = config.pathPrefix === "/" ? "" : config.pathPrefix;
+const path = require('path');
 
 module.exports = {
-  pathPrefix: config.pathPrefix,
   siteMetadata: {
-    siteUrl: config.siteUrl + pathPrefix,
-    rssMetadata: {
-      site_url: config.siteUrl + pathPrefix,
-      feed_url: config.siteUrl + pathPrefix + config.siteRss,
-      title: config.siteTitle,
-      description: config.siteDescription,
-      image_url: `${config.siteUrl + pathPrefix}/logos/logo-512.png`,
-      author: config.siteRssAuthor,
-      copyright: `${config.copyright.label} © ${config.copyright.year ||
-        new Date().getFullYear()}`
-    }
+    title: 'Ghost',
+    description: 'The professional publishing platform',
+    siteUrl: 'https://gatsby-casper.netlify.com', // full path to blog - no ending slash
+  },
+  mapping: {
+    'MarkdownRemark.frontmatter.author': 'AuthorYaml',
   },
   plugins: [
-    "gatsby-plugin-react-helmet",
+    'gatsby-plugin-sitemap',
+    'gatsby-plugin-sharp',
     {
-      resolve: "gatsby-source-filesystem",
+      resolve: 'gatsby-source-filesystem',
       options: {
-        name: "posts",
-        path: `${__dirname}/content/${config.blogPostDir}`
-      }
+        name: 'content',
+        path: path.join(__dirname, 'src', 'content'),
+      },
     },
     {
-      resolve: "gatsby-source-filesystem",
-      options: {
-        name: "authors",
-        path: `${__dirname}/content/${config.blogAuthorDir}`
-      }
-    },
-    "gatsby-transformer-json",
-    {
-      resolve: "gatsby-transformer-remark",
+      resolve: 'gatsby-transformer-remark',
       options: {
         plugins: [
           {
-            resolve: "gatsby-remark-images",
+            resolve: 'gatsby-remark-responsive-iframe',
             options: {
-              maxWidth: 710
-            }
-          },
-          {
-            resolve: "gatsby-remark-responsive-iframe"
-          },
-          "gatsby-remark-prismjs",
-          "gatsby-remark-copy-linked-files",
-          "gatsby-remark-autolink-headers"
-        ]
-      }
-    },
-    {
-      resolve: "gatsby-plugin-google-analytics",
-      options: {
-        trackingId: config.googleAnalyticsID
-      }
-    },
-    {
-      resolve: "gatsby-plugin-nprogress",
-      options: {
-        color: config.themeColor
-      }
-    },
-    "gatsby-plugin-sharp",
-    "gatsby-plugin-catch-links",
-    "gatsby-plugin-twitter",
-    "gatsby-plugin-sitemap",
-    {
-      resolve: "gatsby-plugin-manifest",
-      options: {
-        name: config.siteTitle,
-        short_name: config.siteTitle,
-        description: config.siteDescription,
-        start_url: config.pathPrefix,
-        background_color: config.backgroundColor,
-        theme_color: config.themeColor,
-        display: "minimal-ui",
-        icons: [
-          {
-            src: "/logos/logo-192x192.png",
-            sizes: "192x192",
-            type: "image/png"
-          },
-          {
-            src: "/logos/logo-512x512.png",
-            sizes: "512x512",
-            type: "image/png"
-          }
-        ]
-      }
-    },
-    "gatsby-plugin-offline",
-    {
-      resolve: "gatsby-plugin-feed",
-      options: {
-        setup(ref) {
-          const ret = ref.query.site.siteMetadata.rssMetadata;
-          ret.allMarkdownRemark = ref.query.allMarkdownRemark;
-          ret.generator = "GatsbyJS Casper Starter";
-          return ret;
-        },
-        query: `
-        {
-          site {
-            siteMetadata {
-              rssMetadata {
-                site_url
-                feed_url
-                title
-                description
-                image_url
-                author
-                copyright
-              }
-            }
-          }
-        }
-      `,
-        feeds: [
-          {
-            serialize(ctx) {
-              const rssMetadata = ctx.query.site.siteMetadata.rssMetadata;
-              return ctx.query.allMarkdownRemark.edges.map(edge => ({
-                categories: edge.node.frontmatter.tags,
-                date: edge.node.frontmatter.date,
-                title: edge.node.frontmatter.title,
-                description: edge.node.excerpt,
-                author: rssMetadata.author,
-                url: rssMetadata.site_url + edge.node.fields.slug,
-                guid: rssMetadata.site_url + edge.node.fields.slug,
-                custom_elements: [{ "content:encoded": edge.node.html }]
-              }));
+              wrapperStyle: 'margin-bottom: 1rem',
             },
-            query: `
-            {
-              allMarkdownRemark(
-                limit: 1000,
-                sort: { order: DESC, fields: [frontmatter___date] },
-              ) {
-                edges {
-                  node {
-                    excerpt
-                    html
-                    timeToRead
-                    fields { slug }
-                    frontmatter {
-                      title
-                      cover
-                      date
-                      category
-                      tags
-                      author
-                    }
-                  }
-                }
-              }
-            }
-          `,
-            output: config.siteRss
-          }
-        ]
-      }
-    }
-  ]
+          },
+          'gatsby-remark-prismjs',
+          'gatsby-remark-copy-linked-files',
+          'gatsby-remark-smartypants',
+          'gatsby-remark-abbr',
+          {
+            resolve: 'gatsby-remark-images',
+            options: {
+              maxWidth: 1170,
+              quality: 90,
+            },
+          },
+        ],
+      },
+    },
+    'gatsby-transformer-json',
+    {
+      resolve: 'gatsby-plugin-canonical-urls',
+      options: {
+        siteUrl: 'https://gatsby-casper.netlify.com',
+      },
+    },
+    'gatsby-plugin-emotion',
+    'gatsby-plugin-typescript',
+    'gatsby-transformer-sharp',
+    'gatsby-plugin-react-helmet',
+    'gatsby-transformer-yaml',
+    'gatsby-plugin-feed',
+    {
+      resolve: 'gatsby-plugin-postcss',
+      options: {
+        postCssPlugins: [require('postcss-color-function'), require('cssnano')()],
+      },
+    },
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: 'UA-XXXX-Y',
+        // Puts tracking script in the head instead of the body
+        head: true,
+        // IP anonymization for GDPR compliance
+        anonymize: true,
+        // Disable analytics for users with `Do Not Track` enabled
+        respectDNT: true,
+        // Avoids sending pageview hits from custom paths
+        exclude: ['/preview/**'],
+        // Specifies what percentage of users should be tracked
+        sampleRate: 100,
+        // Determines how often site speed tracking beacons will be sent
+        siteSpeedSampleRate: 10,
+      },
+    },
+  ],
 };
