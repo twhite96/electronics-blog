@@ -3,7 +3,7 @@ module.exports = {
   pathPrefix: '/',
   siteUrl: 'https://wtfrobots.netlify.com',
   siteTitle: 'WTF Robots',
-  siteDescription: 'Logbook of my robot building excursions and the wtf moments sure to come',
+  siteDescription: 'Logbook of my robotics wtf moments',
   author: 'Tiffany',
   postsForArchivePage: 3,
   defaultLanguage: 'en',
