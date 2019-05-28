@@ -138,7 +138,7 @@ export default ({ title, authorName }) => (
       <SiteTitle>{title}</SiteTitle>
     </StyledLink>
     <Logo
-      src="/img/avatar.png"
+      src="https://res.cloudinary.com/twhiteblog/image/upload/v1559013684/avatar_nfmlia.png"
       alt={authorName}
     />
     <NameBoard>{authorName}</NameBoard>
