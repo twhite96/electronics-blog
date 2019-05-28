@@ -1,33 +1,55 @@
+/* Vendor imports */
 import React from 'react'
+import PropTypes from 'prop-types'
 import { graphql } from 'gatsby'
-
+/* App imports */
 import Layout from '../components/layout'
-import Posts from '../components/posts'
+import SEO from '../components/seo'
+import PostList from '../components/post-list'
+import ArchivePagination from '../components/archive-pagination'
+import Config from '../../config'
 
-export default ({ data }) => (
+const IndexPage = ({ data }) => (
   <Layout>
-    <Posts data={data.allMarkdownRemark.edges} />
+    <SEO title="Home" description={Config.siteDescription} path="" />
+    <PostList posts={data.allMarkdownRemark.edges} />
+    <ArchivePagination nextPage={2} />
   </Layout>
 )
 
+IndexPage.propTypes = {
+  data: PropTypes.shape({
+    allMarkdownRemark: PropTypes.shape({
+      edges: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
+    }).isRequired,
+  }).isRequired,
+}
+
 export const query = graphql`
-  query {
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
-      totalCount
+  {
+    allMarkdownRemark(
+      sort: { fields: [frontmatter___date], order: DESC }
+      filter: { fileAbsolutePath: { regex: "/index.md$/" } }
+    ) {
       edges {
         node {
-          fields {
-            slug
-          }
-          id
           frontmatter {
+            path
             title
-            date(formatString: "DD MMMM, YYYY")
             tags
+            excerpt
+            cover {
+              childImageSharp {
+                fluid(maxWidth: 600) {
+                  ...GatsbyImageSharpFluid_tracedSVG
+                }
+              }
+            }
           }
-          excerpt
         }
       }
     }
   }
 `
+
+export default IndexPage

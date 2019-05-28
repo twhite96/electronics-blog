@@ -1,98 +1,90 @@
-const path = require('path')
-const { createFilePath } = require(`gatsby-source-filesystem`)
+/* Vendor imports */
+const path = require('path');
+/* App imports */
+const config = require('./config');
+const utils = require('./src/utils');
 
-exports.onCreateNode = ({ node, getNode, actions }) => {
-  const { createNodeField } = actions
-  if (node.internal.type === `MarkdownRemark`) {
-    const slug = createFilePath({ node, getNode, basePath: 'pages' })
-    createNodeField({
-      node,
-      name: 'slug',
-      value: slug
-    })
-  }
-}
+exports.createPages = ({ actions, graphql }) => {
 
-const createTagPages = (createPage, posts) => {
-  const allTagsIndexTemplate = path.resolve('src/templates/allTagsIndex.js')
-  const singleTagIndexTemplate = path.resolve('src/templates/singleTagIndex.js')
+  const { createPage } = actions;
 
-  const postsByTag = {}
-
-  posts.forEach(({ node }) => {
-    if (node.frontmatter.tags) {
-      node.frontmatter.tags.forEach(tag => {
-        if (!postsByTag[tag]) {
-          postsByTag[tag] = []
-        }
-        postsByTag[tag].push({ node })
-      })
-    }
-  })
-
-  const tags = Object.keys(postsByTag)
-
-  createPage({
-    path: '/tags',
-    component: allTagsIndexTemplate,
-    context: {
-      tags: tags.sort()
-    }
-  })
-
-  tags.forEach(tagName => {
-    const posts = postsByTag[tagName]
-
-    createPage({
-      path: `/tags/${tagName}`,
-      component: singleTagIndexTemplate,
-      context: {
-        posts,
-        tagName
-      }
-    })
-  })
-}
-
-exports.createPages = ({ graphql, actions }) => {
-  const { createPage } = actions
-  return new Promise((resolve, reject) => {
-    graphql(`
-      {
-        allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
-          edges {
-            node {
-              id
-              excerpt
-              fields {
-                slug
-              }
-              frontmatter {
-                title
-                date(formatString: "DD MMMM, YYYY")
-                tags
-              }
+  return graphql(`
+    {
+      allMarkdownRemark(sort: {order: DESC, fields: [frontmatter___date]}) {
+        edges {
+          node {
+            frontmatter {
+              path
+              tags
             }
+            fileAbsolutePath
           }
         }
       }
-    `).then(result => {
-      const posts = result.data.allMarkdownRemark.edges
+    }    
+  `).then(result => {
+    if (result.errors) return Promise.reject(result.errors);
 
-      createTagPages(createPage, posts)
+    const { site, allMarkdownRemark } = result.data
 
-      posts.forEach(({ node }) => {
-        createPage({
-          path: node.fields.slug,
-          component: path.resolve(`./src/templates/blog-post.js`),
-          context: {
-            // Data passed to context is available
-            // in page queries as GraphQL variables.
-            slug: node.fields.slug
-          }
-        })
+    /* Post pages */
+    allMarkdownRemark.edges.forEach(({ node }) => {
+      // Check path prefix of post
+      if (node.frontmatter.path.indexOf(config.pages.blog) !== 0) throw `Invalid path prefix: ${node.frontmatter.path}`
+      
+      createPage({
+        path: node.frontmatter.path,
+        component: path.resolve('src/templates/post/post.js'),
+        context: {
+          postPath: node.frontmatter.path,
+          translations: utils.getRelatedTranslations(node, allMarkdownRemark.edges)
+        }
       })
-      resolve()
     })
+
+    const regexForIndex = /index\.md$/
+    // Posts in default language, excluded the translated versions
+    const defaultPosts = allMarkdownRemark.edges.filter(({ node: { fileAbsolutePath } }) => fileAbsolutePath.match(regexForIndex))
+
+    /* Tag pages */
+    const allTags = [];
+    defaultPosts.forEach(({ node }) => {
+      node.frontmatter.tags.forEach(tag => {
+        if (allTags.indexOf(tag) === -1) allTags.push(tag)
+      })
+    })
+
+    allTags
+    .forEach(tag => {
+      createPage({
+        path: utils.resolvePageUrl(config.pages.tag, tag),
+        component: path.resolve('src/templates/tag/tag.js'),
+        context: {
+          tag: tag
+        }
+      })
+    })
+
+    /* Archive pages */
+    const postsForPage = config.postsForArchivePage;
+    const archivePages = Math.ceil(defaultPosts.length / postsForPage);
+    for (let i = 0; i < archivePages; i++) {
+
+      let posts = defaultPosts.slice(i * postsForPage, i * postsForPage + postsForPage);
+      let archivePage = i + 1;
+
+      createPage({
+        path: utils.resolvePageUrl(config.pages.archive, archivePage),
+        component: path.resolve('src/templates/archive/archive.js'),
+        context: {
+          postPaths: posts.map(edge => edge.node.frontmatter.path),
+          archivePage: archivePage,
+          lastArchivePage: archivePages
+        }
+      })
+
+    }
+
   })
+
 }
