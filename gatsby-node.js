@@ -1,90 +1,94 @@
-/* Vendor imports */
+const _ = require('lodash');
+const Promise = require('bluebird');
 const path = require('path');
-/* App imports */
-const config = require('./config');
-const utils = require('./src/utils');
+const { createFilePath } = require('gatsby-source-filesystem');
+const createPaginatedPages = require('gatsby-paginate');
+const userConfig = require('./config');
 
-exports.createPages = ({ actions, graphql }) => {
-
+exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
 
-  return graphql(`
-    {
-      allMarkdownRemark(sort: {order: DESC, fields: [frontmatter___date]}) {
-        edges {
-          node {
-            frontmatter {
-              path
-              tags
+  return new Promise((resolve, reject) => {
+    const blogPost = path.resolve('./src/templates/blog-post.js');
+    resolve(
+      graphql(
+        `
+          {
+            allMarkdownRemark(
+              sort: { fields: [frontmatter___date], order: DESC }
+              limit: 1000
+            ) {
+              edges {
+                node {
+                  fields {
+                    slug
+                  }
+                  excerpt
+                  frontmatter {
+                    title
+                    date(formatString: "MMMM D, YYYY")
+                    featuredImage {
+                      childImageSharp {
+                        sizes(maxWidth: 850) {
+                          base64
+                          aspectRatio
+                          src
+                          srcSet
+                          sizes
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
-            fileAbsolutePath
           }
+        `,
+      ).then(result => {
+        if (result.errors) {
+          console.log(result.errors);
+          reject(result.errors);
         }
-      }
-    }    
-  `).then(result => {
-    if (result.errors) return Promise.reject(result.errors);
 
-    const { site, allMarkdownRemark } = result.data
+        // Create blog posts pages.
+        const posts = result.data.allMarkdownRemark.edges;
 
-    /* Post pages */
-    allMarkdownRemark.edges.forEach(({ node }) => {
-      // Check path prefix of post
-      if (node.frontmatter.path.indexOf(config.pages.blog) !== 0) throw `Invalid path prefix: ${node.frontmatter.path}`
-      
-      createPage({
-        path: node.frontmatter.path,
-        component: path.resolve('src/templates/post/post.js'),
-        context: {
-          postPath: node.frontmatter.path,
-          translations: utils.getRelatedTranslations(node, allMarkdownRemark.edges)
-        }
-      })
-    })
+        _.each(posts, (post, index) => {
+          const previous =
+            index === posts.length - 1 ? null : posts[index + 1].node;
+          const next = index === 0 ? null : posts[index - 1].node;
 
-    const regexForIndex = /index\.md$/
-    // Posts in default language, excluded the translated versions
-    const defaultPosts = allMarkdownRemark.edges.filter(({ node: { fileAbsolutePath } }) => fileAbsolutePath.match(regexForIndex))
+          createPaginatedPages({
+            edges: result.data.allMarkdownRemark.edges,
+            createPage: createPage,
+            pageTemplate: 'src/templates/index.js',
+            pageLength: userConfig.postsPerPage,
+          });
 
-    /* Tag pages */
-    const allTags = [];
-    defaultPosts.forEach(({ node }) => {
-      node.frontmatter.tags.forEach(tag => {
-        if (allTags.indexOf(tag) === -1) allTags.push(tag)
-      })
-    })
+          createPage({
+            path: post.node.fields.slug,
+            component: blogPost,
+            context: {
+              slug: post.node.fields.slug,
+              previous,
+              next,
+            },
+          });
+        });
+      }),
+    );
+  });
+};
 
-    allTags
-    .forEach(tag => {
-      createPage({
-        path: utils.resolvePageUrl(config.pages.tag, tag),
-        component: path.resolve('src/templates/tag/tag.js'),
-        context: {
-          tag: tag
-        }
-      })
-    })
+exports.onCreateNode = ({ node, actions, getNode }) => {
+  const { createNodeField } = actions;
 
-    /* Archive pages */
-    const postsForPage = config.postsForArchivePage;
-    const archivePages = Math.ceil(defaultPosts.length / postsForPage);
-    for (let i = 0; i < archivePages; i++) {
-
-      let posts = defaultPosts.slice(i * postsForPage, i * postsForPage + postsForPage);
-      let archivePage = i + 1;
-
-      createPage({
-        path: utils.resolvePageUrl(config.pages.archive, archivePage),
-        component: path.resolve('src/templates/archive/archive.js'),
-        context: {
-          postPaths: posts.map(edge => edge.node.frontmatter.path),
-          archivePage: archivePage,
-          lastArchivePage: archivePages
-        }
-      })
-
-    }
-
-  })
-
-}
+  if (node.internal.type === `MarkdownRemark`) {
+    const value = createFilePath({ node, getNode });
+    createNodeField({
+      name: `slug`,
+      node,
+      value,
+    });
+  }
+};
