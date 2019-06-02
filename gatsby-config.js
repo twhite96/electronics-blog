@@ -118,7 +118,7 @@ module.exports = {
     'gatsby-plugin-sharp',
     {
       resolve: 'gatsby-plugin-google-analytics',
-      options: { trackingId: 'UA-73379983-2' },
+      options: { trackingId: 'UA-141208595-1' },
     },
     {
       resolve: 'gatsby-plugin-google-fonts',
@@ -132,8 +132,8 @@ module.exports = {
         name: 'WTF Robots',
         short_name: 'WTF Robots',
         start_url: '/',
-        background_color: '#FFF',
-        theme_color: '#652162',
+        background_color: '#fff',
+        theme_color: '#fff',
         display: 'standalone',
         icon: 'src/favicon.png',
       },
