@@ -25,11 +25,9 @@ module.exports = {
     author: {
       name: 'WTF Robots',
       email: 'wtfbots@tiffanywhite.dev',
-      telegram: '#',
       twitter: 'https://twitter.com/tiffanywhitedev',
       github: 'http://github.com/twhite96',
       rss: 'https://wtfrobots.netlify.com/rss.xml',
-      vk: '#',
     },
   },
   plugins: [
@@ -126,6 +124,18 @@ module.exports = {
       resolve: 'gatsby-plugin-google-fonts',
       options: {
         fonts: ['roboto:400,400i,500,700'],
+      },
+    },
+    {
+      resolve: 'gatsby-plugin-manifest',
+      options: {
+        name: 'WTF Robots',
+        short_name: 'WTF Robots',
+        start_url: '/',
+        background_color: '#FFF',
+        theme_color: '#652162',
+        display: 'standalone',
+        icon: 'src/favicon.png',
       },
     },
     'gatsby-plugin-offline',
