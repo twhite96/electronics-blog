@@ -26,7 +26,7 @@ module.exports = {
       name: 'WTF Robots',
       email: 'wtfbots@tiffanywhite.dev',
       twitter: 'https://twitter.com/tiffanywhitedev',
-      github: 'http://github.com/twhite96',
+      github: 'https://github.com/twhite96',
       rss: 'https://wtfrobots.netlify.com/rss.xml',
     },
   },
