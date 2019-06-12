@@ -104,6 +104,25 @@ module.exports = {
               maxWidth: 960,
             },
           },
+           {
+            resolve: `@raae/gatsby-remark-oembed`,
+            options: {
+              providers: {
+                include: [
+                  'Twitter',
+                  'Instagram',
+                  'Spotify',
+                  'Twitch',
+                  'YouTube',
+                  'Vimeo'
+                ],
+                exclude: [
+                  'Reddit',
+                  'Flickr',
+                ]
+              }
+            }
+          },
           {
             resolve: 'gatsby-remark-responsive-iframe',
             options: { wrapperStyle: 'margin-bottom: 1.0725rem' },

@@ -143,8 +143,9 @@ figcaption {
     text-align: center;
 }
 
-.layout {
-    lost-center: $layout-width;
+.layout,
+.player {
+    lost-center: $layout-width !important;
 }
 
 .content {
