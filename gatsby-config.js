@@ -131,7 +131,7 @@ module.exports = {
       options: {
         name: 'WTF Robots',
         short_name: 'WTF Robots',
-        start_url: '/',
+        start_url: '/?homescreen=1',
         background_color: '#fff',
         theme_color: '#fff',
         display: 'standalone',
