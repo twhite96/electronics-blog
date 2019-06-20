@@ -23,6 +23,7 @@ class IndexRoute extends React.Component {
           </Helmet>
           <Sidebar {...this.props} />
           <div className="content">
+            <div className="littlefoot-footnote__container" />
             <div className="content__inner">{items}</div>
           </div>
         </div>
