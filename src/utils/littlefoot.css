@@ -20,13 +20,14 @@
   z-index: 5
 }
 
+
 .littlefoot-footnote__button:hover,
 .littlefoot-footnote__button:focus {
-  background-color: rgba(215, 213, 208, .5)
+  background-color: rgba(215, 213, 208, .5);
 }
 
 .littlefoot-footnote__button:active {
-  background-color: rgba(215, 213, 208, .5)
+  background-color: rgba(215, 213, 208, .5);
 }
 
 .littlefoot-footnote__button.is-active {

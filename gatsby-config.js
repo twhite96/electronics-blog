@@ -104,24 +104,22 @@ module.exports = {
               maxWidth: 960,
             },
           },
-           {
+          {
             resolve: `@raae/gatsby-remark-oembed`,
             options: {
               providers: {
-                include: [
-                  'Twitter',
-                  'Instagram',
-                  'Spotify',
-                  'Twitch',
-                  'YouTube',
-                  'Vimeo'
-                ],
-                exclude: [
-                  'Reddit',
-                  'Flickr',
-                ]
-              }
-            }
+                include: ['Twitter', 'Instagram', 'Spotify', 'Twitch'],
+                exclude: ['Reddit', 'Flickr', 'YouTube', 'Vimeo'],
+              },
+            },
+          },
+          {
+            resolve: 'gatsby-remark-better-embed-video',
+            options: {
+              showInfo: true,
+              related: false,
+              noIframeBorder: false
+            },
           },
           {
             resolve: 'gatsby-remark-responsive-iframe',
@@ -142,7 +140,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-google-fonts',
       options: {
-        fonts: ['roboto:400,400i,500,700'],
+        fonts: [`open sans:400,400i,500,700`],
       },
     },
     {

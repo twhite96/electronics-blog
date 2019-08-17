@@ -6,7 +6,7 @@ path: "/about"
 
 ![](./2.jpg)
 
-I'm Tiffany, a front-end developer and electronics geek. I have always loved electronics and gadgets and was always thinking of ways to build something that I probably didn't have the materials for. Taking things apart was a no-go in my house.
+I'm Tiffany, a front-end developer at a really cool consulting firm in Virginia where I get to work from home, here in my loft in PA. I'm also an electronics geek. I have always loved electronics and gadgets and was always thinking of ways to build something that I probably didn't have the materials for. Taking things apart was a no-go in my house.
 
 I *did* try though. It didn't go well.
 

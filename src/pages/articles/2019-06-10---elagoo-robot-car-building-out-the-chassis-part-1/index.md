@@ -16,7 +16,7 @@ I spent the better half of an evening two Saturdays ago building out the chassis
 https://www.amazon.com/dp/B07KPZ8RSZ/ref=cm_sw_r_oth_tai_FLwaDb9WB5SAW), which is a thing for teens but that never stopped me before...
 
 
-https://vimeo.com/118192159
+`vimeo: https://vimeo.com/118192159`
 
 
 
